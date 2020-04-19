@@ -43,7 +43,7 @@ export const Owner = styled.header`
 `;
 
 export const IssueList = styled.ul`
-  padding-top: 30px;
+  padding-top: 15px;
   margin-top: 30px;
   border-top: 1px solid #eee;
   list-style: none;
@@ -99,5 +99,26 @@ export const IssueList = styled.ul`
         color: #999;
       }
     }
+  }
+`;
+
+export const IssueFilter = styled.div`
+  margin-bottom: 15px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+
+  strong {
+    color: #333;
+    font-size: 14px;
+  }
+
+  select {
+    margin-left: 10px;
+    border: 1px solid #eee;
+    background: transparent;
+    padding: 10px 15px;
+    color: #333;
+    font-size: 12px;
   }
 `;

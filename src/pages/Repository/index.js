@@ -6,7 +6,7 @@ import React, { Component } from 'react';
 import api from '../../services/api';
 
 import Container from '../../components/Container';
-import { Loading, Owner, IssueList } from './styles';
+import { Loading, Owner, IssueList, IssueFilter } from './styles';
 
 export default class Repository extends Component {
   constructor() {
@@ -15,11 +15,14 @@ export default class Repository extends Component {
       repository: {},
       issues: [],
       loading: true,
+      issuesState: 'open',
     };
   }
 
   async componentDidMount() {
     const { match } = this.props;
+
+    const { issuesState } = this.state;
 
     const repoName = decodeURIComponent(match.params.repository);
 
@@ -27,7 +30,7 @@ export default class Repository extends Component {
       api.get(`/repos/${repoName}`),
       api.get(`/repos/${repoName}/issues`, {
         params: {
-          state: 'open',
+          state: issuesState,
           per_page: 5,
         },
       }),
@@ -40,8 +43,28 @@ export default class Repository extends Component {
     });
   }
 
+  async componentDidUpdate() {
+    const { match } = this.props;
+    const repoName = decodeURIComponent(match.params.repository);
+
+    const { issuesState } = this.state;
+
+    const response = await api.get(`/repos/${repoName}/issues`, {
+      params: {
+        state: issuesState,
+        per_page: 5,
+      },
+    });
+
+    this.setState({ issues: response.data });
+  }
+
+  handleSelectChange = (e) => {
+    this.setState({ issuesState: e.target.value });
+  };
+
   render() {
-    const { repository, issues, loading } = this.state;
+    const { repository, issues, loading, issuesState } = this.state;
 
     if (loading) {
       return <Loading>Carregando</Loading>;
@@ -57,6 +80,18 @@ export default class Repository extends Component {
         </Owner>
 
         <IssueList>
+          <IssueFilter>
+            <strong>Filtrar:</strong>
+            <select
+              id="issues-state"
+              value={issuesState}
+              onChange={this.handleSelectChange}
+            >
+              <option value="open">Em aberto</option>
+              <option value="all">Todas</option>
+              <option value="closed">Fechadas</option>
+            </select>
+          </IssueFilter>
           {issues.map((issue) => (
             <li key={String(issue.id)}>
               <img src={issue.user.avatar_url} alt={issue.user.login} />
