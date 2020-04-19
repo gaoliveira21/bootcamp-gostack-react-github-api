@@ -2,11 +2,12 @@
 import { Link } from 'react-router-dom';
 import propTypes from 'prop-types';
 import React, { Component } from 'react';
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
 import api from '../../services/api';
 
 import Container from '../../components/Container';
-import { Loading, Owner, IssueList, IssueFilter } from './styles';
+import { Loading, Owner, IssueList, IssueFilter, Pagination } from './styles';
 
 export default class Repository extends Component {
   constructor() {
@@ -16,13 +17,14 @@ export default class Repository extends Component {
       issues: [],
       loading: true,
       issuesState: 'open',
+      page: 1,
     };
   }
 
   async componentDidMount() {
     const { match } = this.props;
 
-    const { issuesState } = this.state;
+    const { issuesState, page } = this.state;
 
     const repoName = decodeURIComponent(match.params.repository);
 
@@ -32,6 +34,7 @@ export default class Repository extends Component {
         params: {
           state: issuesState,
           per_page: 5,
+          page,
         },
       }),
     ]);
@@ -47,12 +50,13 @@ export default class Repository extends Component {
     const { match } = this.props;
     const repoName = decodeURIComponent(match.params.repository);
 
-    const { issuesState } = this.state;
+    const { issuesState, page } = this.state;
 
     const response = await api.get(`/repos/${repoName}/issues`, {
       params: {
         state: issuesState,
         per_page: 5,
+        page,
       },
     });
 
@@ -63,8 +67,18 @@ export default class Repository extends Component {
     this.setState({ issuesState: e.target.value });
   };
 
+  handleNextPage = () => {
+    const { page } = this.state;
+    this.setState({ page: page + 1 });
+  };
+
+  handlePrevPage = () => {
+    const { page } = this.state;
+    this.setState({ page: page - 1 });
+  };
+
   render() {
-    const { repository, issues, loading, issuesState } = this.state;
+    const { repository, issues, loading, issuesState, page } = this.state;
 
     if (loading) {
       return <Loading>Carregando</Loading>;
@@ -107,6 +121,18 @@ export default class Repository extends Component {
             </li>
           ))}
         </IssueList>
+        <Pagination>
+          <button
+            type="button"
+            disabled={page === 1}
+            onClick={this.handlePrevPage}
+          >
+            <FaChevronLeft color="#fff" size={16} />
+          </button>
+          <button type="button" onClick={this.handleNextPage}>
+            <FaChevronRight color="#fff" size={16} />
+          </button>
+        </Pagination>
       </Container>
     );
   }

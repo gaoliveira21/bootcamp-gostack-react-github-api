@@ -122,3 +122,21 @@ export const IssueFilter = styled.div`
     font-size: 12px;
   }
 `;
+
+export const Pagination = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+
+  button {
+    background: #7159c1;
+    border: 0;
+    padding: 10px 15px;
+    border-radius: 4px;
+  }
+
+  button[disabled] {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+`;
