@@ -13,6 +13,7 @@ class Main extends Component {
       newRepo: '',
       repositories: [],
       loading: false,
+      error: false,
     };
   }
 
@@ -37,27 +38,35 @@ class Main extends Component {
   };
 
   handleSubmit = async (e) => {
-    e.preventDefault();
+    try {
+      e.preventDefault();
 
-    this.setState({ loading: true });
+      this.setState({ loading: true });
 
-    const { newRepo, repositories } = this.state;
+      const { newRepo, repositories } = this.state;
 
-    const response = await api.get(`/repos/${newRepo}`);
+      const response = await api.get(`/repos/${newRepo}`);
 
-    const data = {
-      name: response.data.full_name,
-    };
+      const data = {
+        name: response.data.full_name,
+      };
 
-    this.setState({
-      repositories: [...repositories, data],
-      newRepo: '',
-      loading: false,
-    });
+      this.setState({
+        repositories: [...repositories, data],
+        newRepo: '',
+        loading: false,
+        error: false,
+      });
+    } catch (error) {
+      this.setState({
+        loading: false,
+        error: true,
+      });
+    }
   };
 
   render() {
-    const { newRepo, loading, repositories } = this.state;
+    const { newRepo, loading, repositories, error } = this.state;
 
     return (
       <Container>
@@ -66,7 +75,7 @@ class Main extends Component {
           Repositórios
         </h1>
 
-        <Form onSubmit={this.handleSubmit}>
+        <Form onSubmit={this.handleSubmit} error={String(error)}>
           <input
             type="text"
             placeholder="Adicionar repositório"
@@ -74,7 +83,7 @@ class Main extends Component {
             onChange={this.handleInputChange}
           />
 
-          <SubmitButton loading={loading}>
+          <SubmitButton loading={String(loading)}>
             {loading ? (
               <FaSpinner color="#fff" size={14} />
             ) : (
