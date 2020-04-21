@@ -6,5 +6,6 @@
 
 ## Resultado do desafio
 
-<img src="./.github/repositories-list.png" width="50%">
-<img src="./.github/repository-details.png" width="50%">
+**Repositories**           |  **Repository details**
+:-------------------------:|:-------------------------:
+<img src="./.github/repositories-list.png" width="50%">  |  <img src="./.github/repository-details.png" width="50%">
